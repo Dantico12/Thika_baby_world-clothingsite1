@@ -39,6 +39,38 @@
             display: flex;
             min-height: 100vh;
         }
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            cursor: pointer;
+            width: 30px;
+            height: 20px;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hamburger-menu span {
+            width: 100%;
+            height: 3px;
+            background-color: black;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
 
         /* [Previous sidebar styles remain exactly the same] */
         .sidebar {
@@ -244,39 +276,29 @@
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(2, 1fr);
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+            .hamburger-menu {
+                display: flex;
             }
-        }
 
-        @media (max-width: 768px) {
             .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            footer {
-                margin-left: 0;
                 width: 100%;
             }
-
-            .welcome-header {
-                font-size: 2em;
-            }
         }
+
     </style>
+   
 </head>
 <body>
+     <!-- Hamburger Menu -->
+     <div class="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    
     <aside class="sidebar">
         <nav>
             <ul>
@@ -323,5 +345,45 @@
     <footer>
         <p>&copy; 2024 Thika Baby World. All rights reserved.</p>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            function toggleSidebar() {
+                hamburgerMenu.classList.toggle('active');
+                sidebar.classList.toggle('active');
+                mainContent.classList.toggle('blurred');
+            }
+
+            // Hamburger menu click event
+            hamburgerMenu.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when a menu item is clicked
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        // If on the same page, close the sidebar
+                        if (window.location.href.includes(this.getAttribute('href'))) {
+                            toggleSidebar();
+                        }
+                    }
+                });
+            });
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', function(event) {
+                if (
+                    sidebar.classList.contains('active') && 
+                    !sidebar.contains(event.target) && 
+                    !hamburgerMenu.contains(event.target)
+                ) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
